@@ -3,52 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKR Project Finance</title>
-    <link rel="stylesheet" href="style.css?v=1.2">
+    <title>HKR Finance Tracker</title>
+    <link rel="stylesheet" href="style.css?v=2.0">
     <link rel="manifest" href="manifest.json">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <div class="app-container">
         <div class="top-bar">
-            <div class="brand">HKR <span>PROJECT</span></div>
+            <div class="brand">HKR <span>FINANCE</span></div>
+            <select id="filterWaktu" onchange="updateUI()">
+                <option value="bulan">Bulan Ini</option>
+                <option value="tahun">Tahun Ini</option>
+                <option value="semua">Semua</option>
+            </select>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
         </div>
 
         <div class="header-stats">
-            <p>Saldo Saat Ini</p>
             <h1 id="saldoTotal">Rp 0</h1>
             <div class="mini-stats">
                 <div class="stat-box">
-                    <small>Masuk</small>
-                    <p id="totalMasuk" style="color: #10b981;">Rp 0</p>
+                    <small>Pemasukan</small>
+                    <p id="totalMasuk" class="txt-in">Rp 0</p>
                 </div>
                 <div class="stat-box">
-                    <small>Keluar</small>
-                    <p id="totalKeluar" style="color: #ef4444;">Rp 0</p>
+                    <small>Pengeluaran</small>
+                    <p id="totalKeluar" class="txt-out">Rp 0</p>
                 </div>
             </div>
         </div>
 
         <div class="input-card">
             <div class="input-row">
-                <input type="text" id="keterangan" placeholder="Keterangan..." autocomplete="off">
-                <input type="number" id="nominal" placeholder="Nominal Rp..." autocomplete="off">
+                <input type="text" id="keterangan" placeholder="Nama transaksi..." autocomplete="off">
+                <input type="number" id="nominal" placeholder="Nominal..." autocomplete="off">
             </div>
             <div class="input-row">
                 <select id="tipe">
                     <option value="masuk">Masuk</option>
                     <option value="keluar">Keluar</option>
                 </select>
-                <button class="btn-add" onclick="tambahData()">SIMPAN</button>
+                <button class="btn-add" onclick="tambahData()">TAMBAH</button>
             </div>
         </div>
 
         <ul id="daftar" class="transaction-list"></ul>
     </div>
 
-    <script src="script.js?v=1.2"></script>
+    <script src="script.js?v=2.0"></script>
 </body>
 </html>
