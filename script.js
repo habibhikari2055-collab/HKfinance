@@ -5,68 +5,68 @@ function tambahData() {
     const nom = document.getElementById('nominal').value;
     const tipe = document.getElementById('tipe').value;
 
-    if (!ket || !nom) return alert("Isi dulu keterangannya!");
+    if (!ket || !nom) return alert("Mohon isi semua data!");
 
     const dataBaru = {
         id: Date.now(),
         keterangan: ket,
         nominal: parseInt(nom),
         tipe: tipe,
-        tanggal: new Date().toLocaleDateString()
+        tanggal: new Date().toLocaleDateString('id-ID')
     };
 
     dataFinance.push(dataBaru);
-    updateUI();
-    saveData();
+    saveAndRender();
     
-    // Reset Input
     document.getElementById('keterangan').value = "";
     document.getElementById('nominal').value = "";
 }
 
 function hapusData(id) {
-    dataFinance = dataFinance.filter(item => item.id !== id);
+    if(confirm("Hapus catatan ini?")) {
+        dataFinance = dataFinance.filter(item => item.id !== id);
+        saveAndRender();
+    }
+}
+
+function saveAndRender() {
+    localStorage.setItem('hkr_data', JSON.stringify(dataFinance));
     updateUI();
-    saveData();
 }
 
 function updateUI() {
     const daftar = document.getElementById('daftar');
     daftar.innerHTML = "";
     
-    let totalMasuk = 0;
-    let totalKeluar = 0;
+    let inTotal = 0;
+    let outTotal = 0;
 
-    dataFinance.forEach(item => {
-        if (item.tipe === 'masuk') totalMasuk += item.nominal;
-        else totalKeluar += item.nominal;
+    dataFinance.reverse().forEach(item => {
+        if (item.tipe === 'masuk') inTotal += item.nominal;
+        else outTotal += item.nominal;
 
         const li = document.createElement('li');
         li.className = 'item';
         li.innerHTML = `
             <div>
-                <p style="font-weight:bold">${item.keterangan}</p>
-                <small style="color:#64748b">${item.tanggal}</small>
+                <p style="font-weight:600">${item.keterangan}</p>
+                <small style="color:#94a3b8">${item.tanggal}</small>
             </div>
             <div style="text-align:right">
-                <p class="${item.tipe === 'masuk' ? 'txt-in' : 'txt-out'}">
-                    ${item.tipe === 'masuk' ? '+' : '-'} Rp ${item.nominal.toLocaleString()}
+                <p style="color: ${item.tipe === 'masuk' ? '#10b981' : '#ef4444'}; font-weight:bold">
+                    ${item.tipe === 'masuk' ? '+' : '-'} ${item.nominal.toLocaleString('id-ID')}
                 </p>
                 <button class="btn-del" onclick="hapusData(${item.id})">Hapus</button>
             </div>
         `;
         daftar.appendChild(li);
     });
+    // Balikkan lagi agar urutan push data selanjutnya tetap benar
+    dataFinance.reverse();
 
-    const saldo = totalMasuk - totalKeluar;
-    document.getElementById('saldoTotal').innerText = `Rp ${saldo.toLocaleString()}`;
-    document.getElementById('totalMasuk').innerText = `Rp ${totalMasuk.toLocaleString()}`;
-    document.getElementById('totalKeluar').innerText = `Rp ${totalKeluar.toLocaleString()}`;
+    document.getElementById('saldoTotal').innerText = `Rp ${(inTotal - outTotal).toLocaleString('id-ID')}`;
+    document.getElementById('totalMasuk').innerText = `Rp ${inTotal.toLocaleString('id-ID')}`;
+    document.getElementById('totalKeluar').innerText = `Rp ${outTotal.toLocaleString('id-ID')}`;
 }
 
-function saveData() {
-    localStorage.setItem('hkr_data', JSON.stringify(dataFinance));
-}
-
-// Jalankan UI saat pertama buka
 updateUI();
