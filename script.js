@@ -1,177 +1,72 @@
-let dataKeuangan = JSON.parse(localStorage.getItem('financeHKR_Final')) || [];
+let dataFinance = JSON.parse(localStorage.getItem('hkr_data')) || [];
 
-// HANDLE BACKGROUND
-function handleImage(input) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        document.getElementById('appCard').style.backgroundImage = `url(${e.target.result})`;
-        localStorage.setItem('hkrBg_Final', e.target.result);
-    }
-    reader.readAsDataURL(input.files[0]);
-}
-
-function resetBg() {
-    if(confirm("Hapus foto latar belakang?")) {
-        localStorage.removeItem('hkrBg_Final');
-        document.getElementById('appCard').style.backgroundImage = 'none';
-    }
-}
-
-if(localStorage.getItem('hkrBg_Final')) {
-    document.getElementById('appCard').style.backgroundImage = `url(${localStorage.getItem('hkrBg_Final')})`;
-}
-
-// NAVIGATION
-function switchView(view) {
-    const harian = document.getElementById('view-harian');
-    const ringkasan = document.getElementById('view-ringkasan');
-    const btns = document.querySelectorAll('.tab-btn');
-
-    if (view === 'harian') {
-        harian.style.display = 'block';
-        ringkasan.style.display = 'none';
-        btns[0].classList.add('active');
-        btns[1].classList.remove('active');
-    } else {
-        harian.style.display = 'none';
-        ringkasan.style.display = 'block';
-        btns[0].classList.remove('active');
-        btns[1].classList.add('active');
-        hitungLaporan();
-    }
-}
-
-// LOGIKA DATA
 function tambahData() {
     const ket = document.getElementById('keterangan').value;
     const nom = document.getElementById('nominal').value;
     const tipe = document.getElementById('tipe').value;
 
-    if (!ket || !nom) return alert("Isi data transaksi!");
+    if (!ket || !nom) return alert("Isi dulu keterangannya!");
 
-    const sekarang = new Date();
-    const transaksi = {
+    const dataBaru = {
         id: Date.now(),
-        ts: sekarang.getTime(),
-        ket,
-        nom: parseInt(nom),
-        tgl: sekarang.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
-        jam: sekarang.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        tipe
+        keterangan: ket,
+        nominal: parseInt(nom),
+        tipe: tipe,
+        tanggal: new Date().toLocaleDateString()
     };
 
-    dataKeuangan.unshift(transaksi);
-    save();
-    document.getElementById('keterangan').value = '';
-    document.getElementById('nominal').value = '';
+    dataFinance.push(dataBaru);
+    updateUI();
+    saveData();
+    
+    // Reset Input
+    document.getElementById('keterangan').value = "";
+    document.getElementById('nominal').value = "";
 }
 
 function hapusData(id) {
-    if(confirm("Hapus catatan ini?")) {
-        dataKeuangan = dataKeuangan.filter(t => t.id !== id);
-        save();
-    }
+    dataFinance = dataFinance.filter(item => item.id !== id);
+    updateUI();
+    saveData();
 }
 
-function save() {
-    localStorage.setItem('financeHKR_Final', JSON.stringify(dataKeuangan));
-    render();
-}
+function updateUI() {
+    const daftar = document.getElementById('daftar');
+    daftar.innerHTML = "";
+    
+    let totalMasuk = 0;
+    let totalKeluar = 0;
 
-function render() {
-    const list = document.getElementById('daftar');
-    let masuk = 0, keluar = 0;
+    dataFinance.forEach(item => {
+        if (item.tipe === 'masuk') totalMasuk += item.nominal;
+        else totalKeluar += item.nominal;
 
-    list.innerHTML = '';
-    dataKeuangan.forEach(t => {
-        const isM = t.tipe === 'masuk';
-        list.innerHTML += `
-            <li class="item-list" style="border-left: 4px solid ${isM ? 'var(--in)' : 'var(--out)'}">
-                <div class="item-info">
-                    <strong>${t.ket}</strong>
-                    <small>${t.tgl} • ${t.jam}</small>
-                </div>
-                <div style="display:flex; align-items:center; gap:12px">
-                    <span class="${isM ? 'txt-in' : 'txt-out'}" style="font-weight:700">
-                        ${isM ? '+' : '-'} ${t.nom.toLocaleString()}
-                    </span>
-                    <button class="btn-del" onclick="hapusData(${t.id})">×</button>
-                </div>
-            </li>`;
-        if (isM) masuk += t.nom; else keluar += t.nom;
+        const li = document.createElement('li');
+        li.className = 'item';
+        li.innerHTML = `
+            <div>
+                <p style="font-weight:bold">${item.keterangan}</p>
+                <small style="color:#64748b">${item.tanggal}</small>
+            </div>
+            <div style="text-align:right">
+                <p class="${item.tipe === 'masuk' ? 'txt-in' : 'txt-out'}">
+                    ${item.tipe === 'masuk' ? '+' : '-'} Rp ${item.nominal.toLocaleString()}
+                </p>
+                <button class="btn-del" onclick="hapusData(${item.id})">Hapus</button>
+            </div>
+        `;
+        daftar.appendChild(li);
     });
 
-    document.getElementById('totalMasuk').innerText = `Rp ${masuk.toLocaleString()}`;
-    document.getElementById('totalKeluar').innerText = `Rp ${keluar.toLocaleString()}`;
-    document.getElementById('saldoTotal').innerText = `Rp ${(masuk - keluar).toLocaleString()}`;
+    const saldo = totalMasuk - totalKeluar;
+    document.getElementById('saldoTotal').innerText = `Rp ${saldo.toLocaleString()}`;
+    document.getElementById('totalMasuk').innerText = `Rp ${totalMasuk.toLocaleString()}`;
+    document.getElementById('totalKeluar').innerText = `Rp ${totalKeluar.toLocaleString()}`;
 }
 
-// LOGIKA LAPORAN
-function hitungLaporan() {
-    const now = new Date();
-    let mBulan = 0, kBulan = 0, mTahun = 0, kTahun = 0;
-
-    dataKeuangan.forEach(t => {
-        const d = new Date(t.ts);
-        if (d.getFullYear() === now.getFullYear()) {
-            if (t.tipe === 'masuk') mTahun += t.nom; else kTahun += t.nom;
-            if (d.getMonth() === now.getMonth()) {
-                if (t.tipe === 'masuk') mBulan += t.nom; else kBulan += t.nom;
-            }
-        }
-    });
-
-    const box = (m, k) => `
-        <div style="background:var(--glass); padding:15px; border-radius:18px; margin-top:10px">
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:14px">
-                <span style="opacity:0.6">Pemasukan</span><span class="txt-in">Rp ${m.toLocaleString()}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px">
-                <span style="opacity:0.6">Pengeluaran</span><span class="txt-out">Rp ${k.toLocaleString()}</span>
-            </div>
-            <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px; display:flex; justify-content:space-between; font-weight:bold">
-                <span>Tabungan</span><span>Rp ${(m-k).toLocaleString()}</span>
-            </div>
-        </div>`;
-
-    document.getElementById('bulanIni').innerHTML = box(mBulan, kBulan);
-    document.getElementById('tahunIni').innerHTML = box(mTahun, kTahun);
+function saveData() {
+    localStorage.setItem('hkr_data', JSON.stringify(dataFinance));
 }
 
-render();
-// FUNGSI UNTUK MENGUNDUH BACKUP DATA
-function exportData() {
-    // Cek apakah ada data atau tidak
-    if (dataKeuangan.length === 0) {
-        alert("Belum ada data transaksi yang bisa di-backup.");
-        return;
-    }
-
-    // Konfirmasi kepada pengguna
-    if (confirm("Ingin mengunduh backup data keuangan Anda?")) {
-        // Mengubah data (Array) menjadi teks format JSON
-        const dataStr = JSON.stringify(dataKeuangan, null, 2);
-        
-        // Membuat objek file sementara di memori browser
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        
-        // Membuat elemen link tersembunyi untuk memicu download
-        const link = document.createElement("a");
-        link.href = url;
-        
-        // Memberi nama file dengan tanggal saat ini agar rapi
-        const tglSekarang = new Date().toISOString().split('T')[0];
-        link.download = `HKR_Backup_${tglSekarang}.json`;
-        
-        // Jalankan perintah download
-        document.body.appendChild(link);
-        link.click();
-        
-        // Bersihkan kembali elemen setelah selesai
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-
-        alert("Backup berhasil! Simpan file .json ini dengan baik.");
-    }
-}
+// Jalankan UI saat pertama buka
+updateUI();
