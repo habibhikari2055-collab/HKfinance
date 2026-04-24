@@ -1,109 +1,62 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
-body {
-    background-color: #0f172a; /* Solid Dark - Lebih ringan */
-    color: white;
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-}
+body { background-color: #0f172a; color: white; display: flex; justify-content: center; padding: 10px; }
 
 .app-container {
-    width: 100%;
-    max-width: 450px;
-    background: #1e293b; /* Warna solid, bukan transparan agar cepat */
-    border-radius: 28px;
-    padding: 20px;
-    min-height: 95vh;
+    width: 100%; max-width: 450px; background: #1e293b; 
+    border-radius: 28px; padding: 20px; min-height: 95vh;
+    display: flex; flex-direction: column;
 }
 
-.top-bar {
+/* Memperbaiki Header agar tidak bertabrakan */
+.header-area {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; /* Judul dan Filter susun atas-bawah */
+    gap: 12px;
     margin-bottom: 20px;
+    align-items: center;
 }
 
-.brand { font-weight: 800; }
+.brand { font-weight: 800; font-size: 1.2rem; }
 .brand span { color: #8b5cf6; }
 
 #filterWaktu {
-    background: #334155;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-size: 12px;
+    width: 100%; /* Filter jadi lebar penuh agar mudah diklik di HP */
+    background: #334155; color: white; border: none;
+    padding: 8px; border-radius: 10px; font-size: 13px;
 }
 
-/* Container Diagram */
-.chart-container {
-    background: #0f172a;
-    border-radius: 20px;
-    padding: 15px;
-    margin-bottom: 20px;
-    height: 200px;
-}
+.chart-container { background: #0f172a; border-radius: 20px; padding: 15px; margin-bottom: 20px; height: 200px; }
 
 .header-stats { text-align: center; margin-bottom: 25px; }
 .header-stats h1 { font-size: 2.2rem; margin: 5px 0; }
 
-.mini-stats { display: flex; gap: 10px; margin-top: 15px; }
-.stat-box { 
-    flex: 1; 
-    background: #334155; 
-    padding: 12px; 
-    border-radius: 16px; 
-}
+.mini-stats { display: flex; gap: 10px; }
+.stat-box { flex: 1; background: #334155; padding: 12px; border-radius: 16px; }
 
-/* Input Area */
-.input-card {
-    background: #334155;
-    padding: 15px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-}
-
+.input-card { background: #334155; padding: 15px; border-radius: 20px; margin-bottom: 20px; }
 .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
 
-input, select, .btn-add {
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    font-size: 14px;
-}
-
+input, select, .btn-add { padding: 12px; border-radius: 12px; border: none; font-size: 14px; }
 input { background: #1e293b; color: white; flex: 2; width: 100%; }
 select { background: #475569; color: white; flex: 1; }
-.btn-add { background: #8b5cf6; color: white; font-weight: bold; flex: 1; cursor: pointer; }
+.btn-add { background: #8b5cf6; color: white; font-weight: bold; flex: 1; }
 
-/* List */
-.transaction-list { list-style: none; }
-.item {
-    background: #334155;
-    padding: 15px;
-    border-radius: 16px;
+.item { background: #334155; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.txt-in { color: #10b981; } .txt-out { color: #ef4444; }
+
+.btn-del { background: #475569; color: #cbd5e1; border: none; padding: 5px 10px; border-radius: 8px; font-size: 11px; margin-top: 5px; cursor: pointer; }
+
+/* Tombol Backup */
+.backup-section {
+    margin-top: auto; /* Paksa ke paling bawah */
+    padding-top: 20px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+    gap: 10px;
 }
 
-.txt-in { color: #10b981; font-weight: bold; }
-.txt-out { color: #ef4444; font-weight: bold; }
-
-.btn-del {
-    background: #475569;
-    color: #cbd5e1;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 10px;
-    margin-top: 5px;
-    cursor: pointer;
+.btn-secondary {
+    flex: 1; background: #475569; color: white; border: none;
+    padding: 10px; border-radius: 10px; font-size: 11px;
+    text-align: center; cursor: pointer;
 }
