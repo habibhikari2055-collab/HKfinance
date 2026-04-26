@@ -1,4 +1,4 @@
-let dataFinance = JSON.parse(localStorage.getItem('hkr_v4_data')) || [];
+let dataFinance = JSON.parse(localStorage.getItem('hkr_v5_data')) || [];
 let myChart = null;
 
 function switchTab(tab) {
@@ -31,86 +31,66 @@ function tambahData() {
     document.getElementById('nominal').value = "";
 }
 
-// FUNGSI TRANSFER (Bisa buat Digital atau Tabungan)
 function prosesTransfer(dari, ke, inputID, label) {
     const nominal = parseInt(document.getElementById(inputID).value);
-    if (!nominal || nominal <= 0) return alert("Masukkan nominal!");
+    if (!nominal || nominal <= 0) return;
 
-    // Catatan Pengurangan
-    dataFinance.push({
-        id: Date.now(),
-        keterangan: `${label} (Keluar dari ${dari})`,
-        nominal: nominal, tipe: 'keluar', sumber: dari,
-        tanggal: new Date().toISOString()
-    });
-
-    // Catatan Penambahan
-    dataFinance.push({
-        id: Date.now() + 1,
-        keterangan: `${label} (Masuk ke ${ke})`,
-        nominal: nominal, tipe: 'masuk', sumber: ke,
-        tanggal: new Date().toISOString()
-    });
+    dataFinance.push({ id: Date.now(), keterangan: `${label} (Out)`, nominal: nominal, tipe: 'keluar', sumber: dari, tanggal: new Date().toISOString() });
+    dataFinance.push({ id: Date.now() + 1, keterangan: `${label} (In)`, nominal: nominal, tipe: 'masuk', sumber: ke, tanggal: new Date().toISOString() });
 
     saveAndUpdate();
     document.getElementById(inputID).value = "";
-    alert(`${label} Berhasil!`);
-    updateUI();
+    alert("Berhasil dipindahkan!");
+    switchTab('transaksi');
 }
 
 function saveAndUpdate() {
-    localStorage.setItem('hkr_v4_data', JSON.stringify(dataFinance));
+    localStorage.setItem('hkr_v5_data', JSON.stringify(dataFinance));
     updateUI();
 }
 
 function updateUI() {
-    let cash = 0, digital = 0, tabungan = 0, inMon = 0, outMon = 0;
-    const lists = {
-        daftar: document.getElementById('daftar'),
-        daftarTopUp: document.getElementById('daftarTopUp'),
-        daftarNabung: document.getElementById('daftarNabung')
-    };
-    
-    Object.values(lists).forEach(l => { if(l) l.innerHTML = ""; });
+    let cash = 0, digital = 0, savings = 0, inMon = 0, outMon = 0;
+    const daftar = document.getElementById('daftar');
+    const daftarTopUp = document.getElementById('daftarTopUp');
+    const daftarNabung = document.getElementById('daftarNabung');
+
+    [daftar, daftarTopUp, daftarNabung].forEach(l => { if(l) l.innerHTML = ""; });
 
     dataFinance.slice().reverse().forEach(item => {
-        // Hitung Saldo Real-Time
         let multiplier = (item.tipe === 'masuk' ? 1 : -1);
         if (item.sumber === 'cash') cash += (item.nominal * multiplier);
         else if (item.sumber === 'digital') digital += (item.nominal * multiplier);
-        else if (item.sumber === 'tabungan') tabungan += (item.nominal * multiplier);
+        else if (item.sumber === 'tabungan') savings += (item.nominal * multiplier);
 
-        // Statistik Bulanan
         if (new Date(item.tanggal).getMonth() === new Date().getMonth()) {
             if (item.tipe === 'masuk') inMon += item.nominal; else outMon += item.nominal;
         }
 
-        // Render Item
         const li = document.createElement('li');
         li.className = 'item';
-        li.style.borderLeftColor = item.sumber === 'cash' ? '#60a5fa' : (item.sumber === 'digital' ? '#c084fc' : '#facc15');
         li.innerHTML = `
             <div>
-                <p style="font-weight:600; font-size:12px">${item.keterangan}</p>
-                <span class="tag tag-${item.sumber}">${item.sumber}</span>
+                <p>${item.keterangan}</p>
+                <small>${item.sumber.toUpperCase()} • ${new Date(item.tanggal).toLocaleDateString('id-ID')}</small>
             </div>
             <div style="text-align:right">
-                <p class="${item.tipe === 'masuk' ? 'txt-in' : 'txt-out'}">
+                <span class="${item.tipe === 'masuk' ? 'txt-in' : 'txt-out'}">
                     ${item.tipe === 'masuk' ? '+' : '-'} ${item.nominal.toLocaleString('id-ID')}
-                </p>
-                <button class="btn-del" onclick="hapusData(${item.id})">Hapus</button>
+                </span>
+                <button class="btn-del" onclick="hapusData(${item.id})">x</button>
             </div>
         `;
         
-        if(lists.daftar) lists.daftar.appendChild(li);
-        if(item.keterangan.includes("Top Up") && lists.daftarTopUp) lists.daftarTopUp.appendChild(li.cloneNode(true));
-        if(item.keterangan.includes("Menabung") && lists.daftarNabung) lists.daftarNabung.appendChild(li.cloneNode(true));
+        if(daftar) daftar.appendChild(li);
+        if(item.keterangan.includes("Digital") && daftarTopUp) daftarTopUp.appendChild(li.cloneNode(true));
+        if(item.keterangan.includes("Menabung") && daftarNabung) daftarNabung.appendChild(li.cloneNode(true));
     });
 
-    document.getElementById('saldoTotal').innerText = `Rp ${(cash + digital + tabungan).toLocaleString('id-ID')}`;
+    document.getElementById('saldoTotal').innerText = `Rp ${(cash + digital + savings).toLocaleString('id-ID')}`;
     document.getElementById('saldoCash').innerText = cash.toLocaleString('id-ID');
     document.getElementById('saldoDigital').innerText = digital.toLocaleString('id-ID');
-    document.getElementById('saldoTabungan').innerText = tabungan.toLocaleString('id-ID');
+    document.getElementById('saldoTabungan').innerText = savings.toLocaleString('id-ID');
 
     updateChart(inMon, outMon);
 }
@@ -122,8 +102,7 @@ function updateChart(i, o) {
     myChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Masuk', 'Keluar'],
-            datasets: [{ data: [i || 1, o || 0], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 0, cutout: '75%' }]
+            datasets: [{ data: [i || 1, o || 0], backgroundColor: ['#10b981', '#ef4444'], borderWidth: 0, cutout: '85%' }]
         },
         options: { plugins: { legend: { display: false } }, maintainAspectRatio: false }
     });
@@ -136,9 +115,7 @@ function hapusData(id) {
 
 function exportData() {
     const blob = new Blob([JSON.stringify(dataFinance)], {type: "application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = "HKR_Backup_Ultra.json"; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "HKR_Backup.json"; a.click();
 }
 
 function importData(e) {
