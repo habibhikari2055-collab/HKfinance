@@ -1,62 +1,64 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-
 body { background-color: #0f172a; color: white; display: flex; justify-content: center; padding: 10px; }
 
 .app-container {
     width: 100%; max-width: 450px; background: #1e293b; 
-    border-radius: 28px; padding: 20px; min-height: 95vh;
+    border-radius: 30px; padding: 20px; min-height: 96vh;
     display: flex; flex-direction: column;
 }
 
-/* Memperbaiki Header agar tidak bertabrakan */
-.header-area {
-    display: flex;
-    flex-direction: column; /* Judul dan Filter susun atas-bawah */
-    gap: 12px;
-    margin-bottom: 20px;
-    align-items: center;
+/* Navigasi Tab */
+.tab-nav {
+    display: flex; background: #0f172a; border-radius: 15px;
+    padding: 5px; margin-bottom: 20px;
 }
+.tab-btn {
+    flex: 1; padding: 10px; border: none; background: none;
+    color: #94a3b8; cursor: pointer; border-radius: 10px;
+    font-weight: 600; font-size: 13px; transition: 0.3s;
+}
+.tab-btn.active { background: #334155; color: white; }
 
+/* Kontrol Halaman */
+.page { display: none; flex-direction: column; flex: 1; }
+.page.active { display: flex; }
+
+.header-area { text-align: center; margin-bottom: 20px; }
 .brand { font-weight: 800; font-size: 1.2rem; }
 .brand span { color: #8b5cf6; }
 
-#filterWaktu {
-    width: 100%; /* Filter jadi lebar penuh agar mudah diklik di HP */
-    background: #334155; color: white; border: none;
-    padding: 8px; border-radius: 10px; font-size: 13px;
+.info-card {
+    background: rgba(139, 92, 246, 0.1); border: 1px dashed #8b5cf6;
+    padding: 15px; border-radius: 15px; margin-bottom: 20px;
+    font-size: 12px; color: #cbd5e1; line-height: 1.5;
 }
 
-.chart-container { background: #0f172a; border-radius: 20px; padding: 15px; margin-bottom: 20px; height: 200px; }
-
-.header-stats { text-align: center; margin-bottom: 25px; }
-.header-stats h1 { font-size: 2.2rem; margin: 5px 0; }
+#filterWaktu { width: 100%; background: #0f172a; color: white; border: none; padding: 8px; border-radius: 10px; margin-top: 10px; }
+.chart-container { background: #0f172a; border-radius: 20px; padding: 15px; margin-bottom: 20px; height: 160px; }
+.header-stats { text-align: center; margin-bottom: 20px; }
+.header-stats h1 { font-size: 2.2rem; margin-bottom: 15px; }
 
 .mini-stats { display: flex; gap: 10px; }
-.stat-box { flex: 1; background: #334155; padding: 12px; border-radius: 16px; }
+.stat-box { flex: 1; background: #0f172a; padding: 12px; border-radius: 16px; border: 1px solid #334155; }
 
 .input-card { background: #334155; padding: 15px; border-radius: 20px; margin-bottom: 20px; }
 .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
 
-input, select, .btn-add { padding: 12px; border-radius: 12px; border: none; font-size: 14px; }
-input { background: #1e293b; color: white; flex: 2; width: 100%; }
+input, select, .btn-add { padding: 12px; border-radius: 12px; border: none; font-size: 14px; outline: none; }
+input { background: #1e293b; color: white; flex: 1; width: 100%; }
 select { background: #475569; color: white; flex: 1; }
-.btn-add { background: #8b5cf6; color: white; font-weight: bold; flex: 1; }
+.btn-add { background: #8b5cf6; color: white; font-weight: bold; width: 100%; cursor: pointer; margin-top: 5px; }
 
-.item { background: #334155; padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.txt-in { color: #10b981; } .txt-out { color: #ef4444; }
+.transaction-list { list-style: none; flex: 1; overflow-y: auto; max-height: 250px; }
+.item { background: #0f172a; padding: 12px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 
-.btn-del { background: #475569; color: #cbd5e1; border: none; padding: 5px 10px; border-radius: 8px; font-size: 11px; margin-top: 5px; cursor: pointer; }
+.tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-top: 4px; display: inline-block; }
+.tag-cash { background: #1e3a8a; color: #60a5fa; }
+.tag-digital { background: #4c1d95; color: #c084fc; }
 
-/* Tombol Backup */
-.backup-section {
-    margin-top: auto; /* Paksa ke paling bawah */
-    padding-top: 20px;
-    display: flex;
-    gap: 10px;
-}
+.txt-in { color: #10b981; font-weight: 700; }
+.txt-out { color: #ef4444; font-weight: 700; }
+.btn-del { color: #ef4444; background: none; border: none; font-size: 10px; cursor: pointer; }
 
-.btn-secondary {
-    flex: 1; background: #475569; color: white; border: none;
-    padding: 10px; border-radius: 10px; font-size: 11px;
-    text-align: center; cursor: pointer;
-}
+.backup-section { margin-top: 20px; display: flex; gap: 8px; padding-top: 15px; border-top: 1px solid #334155; }
+.btn-secondary { flex: 1; background: #334155; color: #94a3b8; border: none; padding: 10px; border-radius: 10px; font-size: 11px; cursor: pointer; }
