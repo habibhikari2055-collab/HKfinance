@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKR Finance Tracker</title>
-    <link rel="stylesheet" href="style.css?v=2.1">
+    <title>HKR Finance Pro</title>
+    <link rel="stylesheet" href="style.css?v=3.0">
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,56 +12,87 @@
 <body>
 
     <div class="app-container">
-        <div class="header-area">
-            <div class="brand">HKR <span>FINANCE</span></div>
-            <select id="filterWaktu" onchange="updateUI()">
-                <option value="bulan">Bulan Ini</option>
-                <option value="tahun">Tahun Ini</option>
-                <option value="semua">Semua Data</option>
-            </select>
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('transaksi')">Transaksi</button>
+            <button class="tab-btn" onclick="switchTab('dompet')">Dompet Digital</button>
         </div>
 
-        <div class="chart-container">
-            <canvas id="myChart"></canvas>
-        </div>
-
-        <div class="header-stats">
-            <h1 id="saldoTotal">Rp 0</h1>
-            <div class="mini-stats">
-                <div class="stat-box">
-                    <small>Pemasukan</small>
-                    <p id="totalMasuk" class="txt-in">Rp 0</p>
-                </div>
-                <div class="stat-box">
-                    <small>Pengeluaran</small>
-                    <p id="totalKeluar" class="txt-out">Rp 0</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="input-card">
-            <div class="input-row">
-                <input type="text" id="keterangan" placeholder="Nama transaksi..." autocomplete="off">
-                <input type="number" id="nominal" placeholder="Nominal..." autocomplete="off">
-            </div>
-            <div class="input-row">
-                <select id="tipe">
-                    <option value="masuk">Masuk</option>
-                    <option value="keluar">Keluar</option>
+        <div id="page-transaksi" class="page active">
+            <div class="header-area">
+                <div class="brand">HKR <span>FINANCE</span></div>
+                <select id="filterWaktu" onchange="updateUI()">
+                    <option value="bulan">Bulan Ini</option>
+                    <option value="semua">Semua Data</option>
                 </select>
-                <button class="btn-add" onclick="tambahData()">TAMBAH</button>
             </div>
+
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>
+
+            <div class="header-stats">
+                <p class="label-sm">Saldo Gabungan</p>
+                <h1 id="saldoTotal">Rp 0</h1>
+                <div class="mini-stats">
+                    <div class="stat-box">
+                        <small>Cash</small>
+                        <p id="saldoCash" style="color: #60a5fa;">Rp 0</p>
+                    </div>
+                    <div class="stat-box">
+                        <small>Digital</small>
+                        <p id="saldoDigital" style="color: #c084fc;">Rp 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-card">
+                <div class="input-row">
+                    <input type="text" id="keterangan" placeholder="Keterangan...">
+                    <input type="number" id="nominal" placeholder="Rp...">
+                </div>
+                <div class="input-row">
+                    <select id="sumber">
+                        <option value="cash">Uang Cash</option>
+                        <option value="digital">Digital (E-Wallet)</option>
+                    </select>
+                    <select id="tipe">
+                        <option value="masuk">Masuk</option>
+                        <option value="keluar">Keluar</option>
+                    </select>
+                </div>
+                <button class="btn-add" onclick="tambahData()">SIMPAN TRANSAKSI</button>
+            </div>
+
+            <ul id="daftar" class="transaction-list"></ul>
         </div>
 
-        <ul id="daftar" class="transaction-list"></ul>
+        <div id="page-dompet" class="page">
+            <div class="header-area">
+                <div class="brand">TOP UP <span>WALLET</span></div>
+            </div>
+
+            <div class="info-card">
+                <p>Fitur ini akan memindahkan uang dari <b>Cash</b> ke <b>Dompet Digital</b> secara otomatis.</p>
+            </div>
+
+            <div class="input-card">
+                <div class="input-row">
+                    <input type="number" id="nominalTopUp" placeholder="Nominal Top Up...">
+                </div>
+                <button class="btn-add" style="background: #c084fc;" onclick="prosesTopUp()">PROSES TOP UP</button>
+            </div>
+            
+            <div class="list-title">Riwayat Top Up</div>
+            <ul id="daftarTopUp" class="transaction-list"></ul>
+        </div>
 
         <div class="backup-section">
-            <button onclick="exportData()" class="btn-secondary">Simpan Backup (Download)</button>
-            <label for="importFile" class="btn-secondary">Muat Backup (Restore)</label>
+            <button onclick="exportData()" class="btn-secondary">Backup</button>
+            <label for="importFile" class="btn-secondary">Restore</label>
             <input type="file" id="importFile" style="display:none" onchange="importData(event)">
         </div>
     </div>
 
-    <script src="script.js?v=2.1"></script>
+    <script src="script.js?v=3.0"></script>
 </body>
 </html>
