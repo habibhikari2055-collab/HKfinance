@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKR Finance Elite v7</title>
+    <title>HKR Finance - Liquid Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css?v=7.0">
+    <link rel="stylesheet" href="style.css?v=8.0">
 </head>
 <body>
 
@@ -18,8 +18,8 @@
                 <div class="user-avatar">HK</div>
             </div>
 
-            <div class="main-card">
-                <p>Uang Siap Pakai</p>
+            <div class="premium-card">
+                <p class="card-label">Available Liquidity</p>
                 <h1 id="saldoAktif">Rp 0</h1>
                 <div class="card-footer">
                     <div class="sub-stat"><span>Cash</span><p id="saldoCash">Rp 0</p></div>
@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <div class="chart-section">
+            <div class="glass-section">
                 <div class="chart-container-sm"><canvas id="myChart"></canvas></div>
                 <div class="chart-controls">
                     <span id="btn-line" onclick="setChart('line')" class="active">Trend</span>
@@ -36,10 +36,10 @@
                 </div>
             </div>
 
-            <div class="input-compact">
+            <div class="input-container-fixed">
                 <div class="i-grid">
-                    <input type="text" id="keterangan" placeholder="Ket...">
-                    <input type="number" id="nominal" placeholder="Rp...">
+                    <input type="text" id="keterangan" placeholder="Keterangan">
+                    <input type="number" id="nominal" placeholder="Rp">
                     <select id="sumber">
                         <option value="cash">Cash</option>
                         <option value="digital">Digital</option>
@@ -49,45 +49,45 @@
                         <option value="masuk">Masuk</option>
                     </select>
                 </div>
-                <button class="btn-prime-sm" onclick="tambahData()">TAMBAH TRANSAKSI</button>
+                <button class="btn-action-main" onclick="tambahData()">RECORD TRANSACTION</button>
             </div>
             
             <ul id="daftar" class="transaction-list"></ul>
         </div>
 
         <div id="page-digital" class="page">
-            <div class="brand-header"><div class="brand">E-WALLET<span>HUB</span></div></div>
-            <div class="transfer-card">
-                <p>Pindahkan Cash ke Digital</p>
-                <input type="number" id="nominalTopUp" placeholder="Nominal Rp...">
-                <button class="btn-full-sm" onclick="prosesTopUp()">KONFIRMASI TOP UP</button>
+            <div class="brand-header"><div class="brand">DIGITAL<span>FLOW</span></div></div>
+            <div class="glass-section">
+                <p class="section-title">Transfer to Digital Wallet</p>
+                <input type="number" id="nominalTopUp" placeholder="Nominal Rp" class="full-input">
+                <button class="btn-action-main" style="background: #c084fc" onclick="prosesTopUp()">EXECUTE TRANSFER</button>
             </div>
             <ul id="daftarTopUp" class="transaction-list"></ul>
         </div>
 
         <div id="page-tabungan" class="page">
             <div class="brand-header"><div class="brand">SAVINGS<span>VAULT</span></div></div>
-            <div class="saving-card">
-                <p>Total Tabungan</p>
+            <div class="premium-card gold-variant">
+                <p class="card-label">Total Assets Vault</p>
                 <h1 id="saldoTabungan">Rp 0</h1>
             </div>
-            <div class="transfer-card">
-                <input type="number" id="nominalNabung" placeholder="Nominal Rp...">
+            <div class="glass-section">
+                <input type="number" id="nominalNabung" placeholder="Nominal Rp" class="full-input">
                 <div class="btn-split">
-                    <button class="btn-in-sm" onclick="prosesTabungan('masuk')">SIMPAN</button>
-                    <button class="btn-out-sm" onclick="prosesTabungan('keluar')">TARIK</button>
+                    <button class="btn-in" onclick="prosesTabungan('masuk')">DEPOSIT</button>
+                    <button class="btn-out" onclick="prosesTabungan('keluar')">WITHDRAW</button>
                 </div>
             </div>
             <ul id="daftarNabung" class="transaction-list"></ul>
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('harian')">Utama</div>
+            <div class="nav-item active" onclick="switchTab('harian')">Main</div>
             <div class="nav-item" onclick="switchTab('digital')">Digital</div>
-            <div class="nav-item" onclick="switchTab('tabungan')">Tabungan</div>
+            <div class="nav-item" onclick="switchTab('tabungan')">Vault</div>
         </nav>
     </div>
 
-    <script src="script.js?v=7.0"></script>
+    <script src="script.js?v=8.0"></script>
 </body>
 </html>
