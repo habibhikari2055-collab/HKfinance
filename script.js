@@ -1,4 +1,4 @@
-let dataFinance = JSON.parse(localStorage.getItem('hkr_v7_data')) || [];
+let dataFinance = JSON.parse(localStorage.getItem('hkr_v8_data')) || [];
 let myChart = null;
 let chartMode = 'line';
 
@@ -36,32 +36,32 @@ function tambahData() {
 
 function prosesTopUp() {
     const nom = parseInt(document.getElementById('nominalTopUp').value);
-    if (!nom) return;
-    dataFinance.push({ id: Date.now(), keterangan: "Top Up (Out Cash)", nominal: nom, tipe: 'keluar', sumber: 'cash', tanggal: new Date().toISOString() });
-    dataFinance.push({ id: Date.now()+1, keterangan: "Top Up (In Digital)", nominal: nom, tipe: 'masuk', sumber: 'digital', tanggal: new Date().toISOString() });
+    if (!nom || nom <= 0) return;
+    dataFinance.push({ id: Date.now(), keterangan: "Digital Inbound (Out)", nominal: nom, tipe: 'keluar', sumber: 'cash', tanggal: new Date().toISOString() });
+    dataFinance.push({ id: Date.now()+1, keterangan: "Digital Inbound (In)", nominal: nom, tipe: 'masuk', sumber: 'digital', tanggal: new Date().toISOString() });
     save();
     document.getElementById('nominalTopUp').value = "";
-    alert("Top Up Berhasil!");
+    alert("Transfer Completed");
     switchTab('harian');
 }
 
 function prosesTabungan(aksi) {
     const nom = parseInt(document.getElementById('nominalNabung').value);
-    if (!nom) return;
+    if (!nom || nom <= 0) return;
     if (aksi === 'masuk') {
-        dataFinance.push({ id: Date.now(), keterangan: "Menabung (Out Cash)", nominal: nom, tipe: 'keluar', sumber: 'cash', tanggal: new Date().toISOString() });
-        dataFinance.push({ id: Date.now()+1, keterangan: "Simpanan Masuk", nominal: nom, tipe: 'masuk', sumber: 'tabungan', tanggal: new Date().toISOString() });
+        dataFinance.push({ id: Date.now(), keterangan: "Asset Secured (Out)", nominal: nom, tipe: 'keluar', sumber: 'cash', tanggal: new Date().toISOString() });
+        dataFinance.push({ id: Date.now()+1, keterangan: "Asset Secured (In)", nominal: nom, tipe: 'masuk', sumber: 'tabungan', tanggal: new Date().toISOString() });
     } else {
-        dataFinance.push({ id: Date.now(), keterangan: "Tarik Tabungan", nominal: nom, tipe: 'keluar', sumber: 'tabungan', tanggal: new Date().toISOString() });
-        dataFinance.push({ id: Date.now()+1, keterangan: "Tarik (In Cash)", nominal: nom, tipe: 'masuk', sumber: 'cash', tanggal: new Date().toISOString() });
+        dataFinance.push({ id: Date.now(), keterangan: "Fund Released (Out)", nominal: nom, tipe: 'keluar', sumber: 'tabungan', tanggal: new Date().toISOString() });
+        dataFinance.push({ id: Date.now()+1, keterangan: "Fund Released (In)", nominal: nom, tipe: 'masuk', sumber: 'cash', tanggal: new Date().toISOString() });
     }
     save();
     document.getElementById('nominalNabung').value = "";
-    alert(aksi === 'masuk' ? "Berhasil Menabung!" : "Saldo Tabungan ditarik!");
+    alert(aksi === 'masuk' ? "Asset Secured in Vault" : "Funds Released to Cash");
 }
 
 function save() {
-    localStorage.setItem('hkr_v7_data', JSON.stringify(dataFinance));
+    localStorage.setItem('hkr_v8_data', JSON.stringify(dataFinance));
     updateUI();
 }
 
@@ -82,20 +82,24 @@ function updateUI() {
         const li = document.createElement('li');
         li.className = 'item';
         li.innerHTML = `
-            <div>
+            <div class="item-left">
                 <h4>${item.keterangan}</h4>
-                <span class="badge ${item.sumber==='cash'?'bg-cash':(item.sumber==='digital'?'bg-digital':'bg-cash')}">${item.sumber}</span>
-                <span class="badge ${item.tipe==='masuk'?'bg-in':'bg-out'}">${item.tipe}</span>
+                <div class="badge-row">
+                    <span class="badge ${item.sumber==='cash'?'bg-cash':(item.sumber==='digital'?'bg-digital':'bg-cash')}">${item.sumber}</span>
+                    <span class="badge ${item.tipe==='masuk'?'bg-in':'bg-out'}">${item.tipe}</span>
+                </div>
             </div>
-            <div style="text-align:right">
-                <p style="color:${item.tipe==='masuk'?'#10b981':'#ef4444'}">${item.tipe==='masuk'?'+':'-'} ${item.nominal.toLocaleString()}</p>
-                <button class="btn-del" onclick="hapus(${item.id})">x</button>
+            <div class="item-right" style="text-align:right">
+                <p style="color:${item.tipe==='masuk'?'#10b981':'#ef4444'}; font-weight:800; font-size:13px; margin-bottom:5px;">
+                    ${item.tipe==='masuk'?'+':'-'} ${item.nominal.toLocaleString()}
+                </p>
+                <button class="btn-delete-modern" onclick="hapus(${item.id})">Remove</button>
             </div>`;
 
         if (item.sumber === 'tabungan') { if(dSave) dSave.appendChild(li); }
         else {
             if(dMain) dMain.appendChild(li);
-            if(item.keterangan.includes("Top Up") && dWallet) dWallet.appendChild(li.cloneNode(true));
+            if(item.keterangan.includes("Digital") && dWallet) dWallet.appendChild(li.cloneNode(true));
             if (new Date(item.tanggal).getMonth() === new Date().getMonth()) {
                 if (item.tipe === 'masuk') inMon += item.nominal; else outMon += item.nominal;
             }
@@ -105,6 +109,7 @@ function updateUI() {
     document.getElementById('saldoAktif').innerText = `Rp ${(cash + digital).toLocaleString('id-ID')}`;
     document.getElementById('saldoCash').innerText = `Rp ${cash.toLocaleString()}`;
     document.getElementById('saldoDigital').innerText = `Rp ${digital.toLocaleString()}`;
+    if(document.getElementById('saldoDigitalHalaman')) document.getElementById('saldoDigitalHalaman').innerText = `Rp ${digital.toLocaleString()}`;
     if(document.getElementById('saldoTabungan')) document.getElementById('saldoTabungan').innerText = `Rp ${savings.toLocaleString()}`;
 
     renderChart(inMon, outMon);
@@ -129,6 +134,11 @@ function renderChart(i, o) {
     });
 }
 
-function hapus(id) { dataFinance = dataFinance.filter(x => x.id !== id); save(); }
+function hapus(id) {
+    if(confirm("Hapus data ini?")) {
+        dataFinance = dataFinance.filter(x => x.id !== id);
+        save();
+    }
+}
 
 window.onload = () => { setTimeout(updateUI, 300); };
