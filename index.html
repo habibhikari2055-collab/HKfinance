@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKR Finance - Liquid Edition</title>
+    <title>HKR Finance - Elite Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css?v=8.0">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -57,10 +57,17 @@
 
         <div id="page-digital" class="page">
             <div class="brand-header"><div class="brand">DIGITAL<span>FLOW</span></div></div>
+            
+            <div class="premium-card digital-variant">
+                <p class="card-label">Digital Assets</p>
+                <h1 id="saldoDigitalHalaman">Rp 0</h1>
+            </div>
+
             <div class="glass-section">
-                <p class="section-title">Transfer to Digital Wallet</p>
+                <p class="section-title">Inbound Transfer</p>
+                <small class="helper-text">Pindahkan saldo dari Cash ke Digital</small>
                 <input type="number" id="nominalTopUp" placeholder="Nominal Rp" class="full-input">
-                <button class="btn-action-main" style="background: #c084fc" onclick="prosesTopUp()">EXECUTE TRANSFER</button>
+                <button class="btn-action-main" style="background: #a855f7" onclick="prosesTopUp()">EXECUTE TRANSFER</button>
             </div>
             <ul id="daftarTopUp" class="transaction-list"></ul>
         </div>
@@ -72,10 +79,11 @@
                 <h1 id="saldoTabungan">Rp 0</h1>
             </div>
             <div class="glass-section">
+                <p class="section-title">Asset Management</p>
                 <input type="number" id="nominalNabung" placeholder="Nominal Rp" class="full-input">
                 <div class="btn-split">
-                    <button class="btn-in" onclick="prosesTabungan('masuk')">DEPOSIT</button>
-                    <button class="btn-out" onclick="prosesTabungan('keluar')">WITHDRAW</button>
+                    <button class="btn-in" onclick="prosesTabungan('masuk')">SECURE ASSET</button>
+                    <button class="btn-out" onclick="prosesTabungan('keluar')">RELEASE FUNDS</button>
                 </div>
             </div>
             <ul id="daftarNabung" class="transaction-list"></ul>
@@ -88,6 +96,6 @@
         </nav>
     </div>
 
-    <script src="script.js?v=8.0"></script>
+    <script src="script.js"></script>
 </body>
 </html>
