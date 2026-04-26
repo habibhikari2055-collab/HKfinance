@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKR Finance Pro</title>
-    <link rel="stylesheet" href="style.css?v=3.0">
+    <title>HKR Finance Ultra</title>
+    <link rel="stylesheet" href="style.css?v=4.0">
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,17 +13,14 @@
 
     <div class="app-container">
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('transaksi')">Transaksi</button>
-            <button class="tab-btn" onclick="switchTab('dompet')">Dompet Digital</button>
+            <button class="tab-btn active" onclick="switchTab('transaksi')">Utama</button>
+            <button class="tab-btn" onclick="switchTab('dompet')">Digital</button>
+            <button class="tab-btn" onclick="switchTab('tabungan')">Tabungan</button>
         </div>
 
         <div id="page-transaksi" class="page active">
             <div class="header-area">
                 <div class="brand">HKR <span>FINANCE</span></div>
-                <select id="filterWaktu" onchange="updateUI()">
-                    <option value="bulan">Bulan Ini</option>
-                    <option value="semua">Semua Data</option>
-                </select>
             </div>
 
             <div class="chart-container">
@@ -31,16 +28,20 @@
             </div>
 
             <div class="header-stats">
-                <p class="label-sm">Saldo Gabungan</p>
+                <p class="label-sm">Total Kekayaan</p>
                 <h1 id="saldoTotal">Rp 0</h1>
                 <div class="mini-stats">
                     <div class="stat-box">
                         <small>Cash</small>
-                        <p id="saldoCash" style="color: #60a5fa;">Rp 0</p>
+                        <p id="saldoCash" style="color: #60a5fa;">0</p>
                     </div>
                     <div class="stat-box">
                         <small>Digital</small>
-                        <p id="saldoDigital" style="color: #c084fc;">Rp 0</p>
+                        <p id="saldoDigital" style="color: #c084fc;">0</p>
+                    </div>
+                    <div class="stat-box">
+                        <small>Tabungan</small>
+                        <p id="saldoTabungan" style="color: #facc15;">0</p>
                     </div>
                 </div>
             </div>
@@ -52,38 +53,39 @@
                 </div>
                 <div class="input-row">
                     <select id="sumber">
-                        <option value="cash">Uang Cash</option>
-                        <option value="digital">Digital (E-Wallet)</option>
+                        <option value="cash">Cash</option>
+                        <option value="digital">Digital</option>
+                        <option value="tabungan">Tabungan</option>
                     </select>
                     <select id="tipe">
                         <option value="masuk">Masuk</option>
                         <option value="keluar">Keluar</option>
                     </select>
                 </div>
-                <button class="btn-add" onclick="tambahData()">SIMPAN TRANSAKSI</button>
+                <button class="btn-add" onclick="tambahData()">SIMPAN DATA</button>
             </div>
 
             <ul id="daftar" class="transaction-list"></ul>
         </div>
 
         <div id="page-dompet" class="page">
-            <div class="header-area">
-                <div class="brand">TOP UP <span>WALLET</span></div>
-            </div>
-
-            <div class="info-card">
-                <p>Fitur ini akan memindahkan uang dari <b>Cash</b> ke <b>Dompet Digital</b> secara otomatis.</p>
-            </div>
-
+            <div class="header-area"><div class="brand">E-WALLET <span>HUB</span></div></div>
+            <div class="info-card">Pindahkan saldo dari <b>Cash</b> ke <b>Digital</b>.</div>
             <div class="input-card">
-                <div class="input-row">
-                    <input type="number" id="nominalTopUp" placeholder="Nominal Top Up...">
-                </div>
-                <button class="btn-add" style="background: #c084fc;" onclick="prosesTopUp()">PROSES TOP UP</button>
+                <input type="number" id="nominalTopUp" placeholder="Nominal Top Up..." style="width:100%; margin-bottom:10px;">
+                <button class="btn-add" style="background: #c084fc;" onclick="prosesTransfer('cash', 'digital', 'nominalTopUp', 'Top Up Digital')">PROSES TOP UP</button>
             </div>
-            
-            <div class="list-title">Riwayat Top Up</div>
             <ul id="daftarTopUp" class="transaction-list"></ul>
+        </div>
+
+        <div id="page-tabungan" class="page">
+            <div class="header-area"><div class="brand">SAVINGS <span>GOAL</span></div></div>
+            <div class="info-card">Sisihkan uang <b>Cash</b> Anda untuk <b>Tabungan Masa Depan</b>.</div>
+            <div class="input-card">
+                <input type="number" id="nominalNabung" placeholder="Nominal Menabung..." style="width:100%; margin-bottom:10px;">
+                <button class="btn-add" style="background: #facc15; color: #000;" onclick="prosesTransfer('cash', 'tabungan', 'nominalNabung', 'Menabung')">SIMPAN KE TABUNGAN</button>
+            </div>
+            <ul id="daftarNabung" class="transaction-list"></ul>
         </div>
 
         <div class="backup-section">
@@ -93,6 +95,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=3.0"></script>
+    <script src="script.js?v=4.0"></script>
 </body>
 </html>
