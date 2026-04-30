@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKR Finance - Vault Planning Edition</title>
+    <title>HKR Finance - Multi Vault Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -12,13 +12,12 @@
 
     <div class="app-container">
         
-        <!-- PAGE 1: MAIN (LIQUIDITY) -->
+        <!-- PAGE 1: MAIN -->
         <div id="page-harian" class="page active">
             <div class="brand-header">
                 <div class="brand">HKR<span>FINANCE</span></div>
                 <div class="user-avatar">HK</div>
             </div>
-
             <div class="premium-card">
                 <p class="card-label">Available Liquidity</p>
                 <h1 id="saldoAktif">Rp 0</h1>
@@ -27,101 +26,75 @@
                     <div class="sub-stat"><span>Digital</span><p id="saldoDigital">Rp 0</p></div>
                 </div>
             </div>
-
             <div class="glass-section">
                 <div class="chart-container-sm"><canvas id="myChart"></canvas></div>
                 <div class="chart-controls">
                     <span id="btn-line" onclick="setChart('line')" class="active">Trend</span>
                     <span id="btn-bar" onclick="setChart('bar')">Bar</span>
-                    <span id="btn-doughnut" onclick="setChart('doughnut')">Ratio</span>
                 </div>
             </div>
-
             <div class="input-container-fixed">
                 <div class="i-grid">
                     <input type="text" id="keterangan" placeholder="Keterangan">
                     <input type="number" id="nominal" placeholder="Rp">
-                    <select id="sumber">
-                        <option value="cash">Cash</option>
-                        <option value="digital">Digital</option>
-                    </select>
-                    <select id="tipe">
-                        <option value="keluar">Keluar</option>
-                        <option value="masuk">Masuk</option>
-                    </select>
+                    <select id="sumber"><option value="cash">Cash</option><option value="digital">Digital</option></select>
+                    <select id="tipe"><option value="keluar">Keluar</option><option value="masuk">Masuk</option></select>
                 </div>
                 <button class="btn-action-main" onclick="tambahData()">RECORD TRANSACTION</button>
             </div>
-            
             <ul id="daftar" class="transaction-list"></ul>
         </div>
 
-        <!-- PAGE 2: DIGITAL ASSETS -->
+        <!-- PAGE 2: DIGITAL -->
         <div id="page-digital" class="page">
             <div class="brand-header"><div class="brand">DIGITAL<span>FLOW</span></div></div>
-            
             <div class="premium-card digital-variant">
                 <p class="card-label">Digital Assets</p>
                 <h1 id="saldoDigitalHalaman">Rp 0</h1>
             </div>
-
             <div class="glass-section">
                 <p class="section-title">Inbound Transfer</p>
-                <small class="helper-text">Pindahkan saldo dari Cash ke Digital</small>
                 <input type="number" id="nominalTopUp" placeholder="Nominal Rp" class="full-input">
                 <button class="btn-action-main" style="background: #a855f7" onclick="prosesTopUp()">EXECUTE TRANSFER</button>
             </div>
             <ul id="daftarTopUp" class="transaction-list"></ul>
         </div>
 
-        <!-- PAGE 3: VAULT (SAVINGS) -->
+        <!-- PAGE 3: VAULT (MULTI-PLAN) -->
         <div id="page-tabungan" class="page">
             <div class="brand-header"><div class="brand">SAVINGS<span>VAULT</span></div></div>
             
-            <div class="premium-card gold-variant">
-                <p class="card-label" id="namaTargetDisplay">Savings Goal</p>
-                <h1 id="saldoTabungan">Rp 0</h1>
-                
-                <div class="goal-container">
-                    <div class="goal-info">
-                        <span id="progressPersen">0% Achieved</span>
-                        <span id="targetNominalDisplay">Target: Rp 0</span>
-                    </div>
-                    <div class="progress-track">
-                        <div id="progressFill" class="progress-fill"></div>
-                    </div>
-                    <p id="sisaKekurangan" class="shortfall-text">Set your goal to start tracking</p>
-                </div>
-            </div>
-
+            <!-- Tambah Plan Baru -->
             <div class="glass-section">
-                <p class="section-title">Vault Planning</p>
-                <div class="i-grid" style="margin-bottom: 10px;">
+                <p class="section-title">Create New Vault Plan</p>
+                <div class="i-grid">
                     <input type="text" id="inputNamaGoal" placeholder="Nama Target">
                     <input type="number" id="inputTargetNominal" placeholder="Target Rp">
                 </div>
-                <button class="btn-action-main" style="background: #d97706; margin-bottom: 15px;" onclick="setVaultGoal()">UPDATE VAULT PLAN</button>
-                
-                <hr style="border: 0; border-top: 1px solid #2d364f; margin-bottom: 15px;">
-                
-                <p class="section-title">Asset Management</p>
+                <button class="btn-action-main" style="background: var(--gold)" onclick="createVaultPlan()">CREATE PLAN</button>
+            </div>
+
+            <!-- List Container Target -->
+            <div id="vaultPlansContainer"></div>
+
+            <!-- Modal/Area Input Nabung (Akan muncul jika ada plan) -->
+            <div class="glass-section" id="areaNabungVault" style="display:none;">
+                <p class="section-title">Deposit to Plan</p>
+                <select id="pilihPlan" class="full-input"></select>
                 <input type="number" id="nominalNabung" placeholder="Nominal Rp" class="full-input">
                 <div class="btn-split">
-                    <button class="btn-in" onclick="prosesTabungan('masuk')">SECURE ASSET</button>
-                    <button class="btn-out" onclick="prosesTabungan('keluar')">RELEASE FUNDS</button>
+                    <button class="btn-in" onclick="prosesTabungan('masuk')">SECURE</button>
+                    <button class="btn-out" onclick="prosesTabungan('keluar')">RELEASE</button>
                 </div>
             </div>
-            <ul id="daftarNabung" class="transaction-list"></ul>
         </div>
 
-        <!-- BOTTOM NAV -->
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="switchTab('harian')">Main</div>
             <div class="nav-item" onclick="switchTab('digital')">Digital</div>
             <div class="nav-item" onclick="switchTab('tabungan')">Vault</div>
         </nav>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
