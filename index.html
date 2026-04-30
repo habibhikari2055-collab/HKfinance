@@ -2,29 +2,16 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- SEO META TAGS - Agar muncul di Google -->
-    <title>HKRfinance - Smart Personal Finance Vault</title>
-    <meta name="description" content="HKRfinance adalah aplikasi manajemen keuangan pribadi yang aman dengan fitur Multi-Vault untuk mencapai target tabungan Anda.">
-    <meta name="keywords" content="HKRfinance, keuangan, tabungan harian, catatan keuangan, vault tabungan">
-    <meta name="author" content="HKR Finance Team">
-    
-    <!-- Fonts & Icons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKRfinance - Fixed Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="app-container">
-        
         <!-- PAGE 1: MAIN -->
         <div id="page-harian" class="page active">
-            <div class="brand-header">
-                <div class="brand">HKR<span>FINANCE</span></div>
-                <div class="user-avatar">HK</div>
-            </div>
-
+            <div class="brand-header"><div class="brand">HKR<span>FINANCE</span></div></div>
             <div class="premium-card main-balance">
                 <p class="card-label">Total Balance</p>
                 <h1 id="saldoAktif">Rp 0</h1>
@@ -33,7 +20,6 @@
                     <div class="sub-stat"><span>Digital</span><p id="saldoDigital">Rp 0</p></div>
                 </div>
             </div>
-
             <div class="glass-section">
                 <p class="section-title">Record Transaction</p>
                 <div class="i-grid">
@@ -56,8 +42,8 @@
             </div>
             <div class="glass-section">
                 <p class="section-title">Transfer In / Top Up</p>
-                <input type="number" id="nominalTopUp" placeholder="Nominal Rp" class="full-input">
-                <button class="btn-action-main btn-digital" onclick="prosesTopUp()">EXECUTE TRANSFER</button>
+                <input type="number" id="nominalTopUp" placeholder="Nominal Rp">
+                <button class="btn-action-main btn-digital" onclick="prosesTopUp()" style="margin-top:10px; background:var(--digital-color)">EXECUTE TRANSFER</button>
             </div>
         </div>
 
@@ -75,23 +61,21 @@
             <div id="vaultPlansContainer"></div>
             <div class="glass-section" id="areaNabungVault" style="display:none;">
                 <p class="section-title">Manage Savings</p>
-                <select id="pilihPlan" class="full-input" style="margin-bottom:12px"></select>
-                <input type="number" id="nominalNabung" placeholder="Nominal Rp" class="full-input" style="margin-bottom:12px">
-                <div class="btn-group-row">
-                    <button class="btn-in" onclick="prosesTabungan('masuk')">SECURE</button>
-                    <button class="btn-out" onclick="prosesTabungan('keluar')">RELEASE</button>
+                <select id="pilihPlan" class="full-input" style="margin-bottom:12px; width:100%;"></select>
+                <input type="number" id="nominalNabung" placeholder="Nominal Rp" style="margin-bottom:12px; width:100%;">
+                <div class="btn-group-row" style="display:flex; gap:10px;">
+                    <button class="btn-in" onclick="prosesTabungan('masuk')" style="flex:1; background:#10b981; color:white; border:none; padding:12px; border-radius:12px; font-weight:800;">SECURE</button>
+                    <button class="btn-out" onclick="prosesTabungan('keluar')" style="flex:1; background:#ef4444; color:white; border:none; padding:12px; border-radius:12px; font-weight:800;">RELEASE</button>
                 </div>
             </div>
         </div>
 
-        <!-- NAVIGATION -->
         <nav class="bottom-nav">
-            <div class="nav-item active" onclick="switchTab('harian')">Main</div>
-            <div class="nav-item" onclick="switchTab('digital')">Digital</div>
-            <div class="nav-item" onclick="switchTab('tabungan')">Vault</div>
+            <div class="nav-item active" onclick="switchTab('harian', event)">Main</div>
+            <div class="nav-item" onclick="switchTab('digital', event)">Digital</div>
+            <div class="nav-item" onclick="switchTab('tabungan', event)">Vault</div>
         </nav>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
