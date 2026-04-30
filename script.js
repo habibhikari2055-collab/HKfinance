@@ -1,4 +1,5 @@
-let dataFinance = JSON.parse(localStorage.getItem('hkr_v8_data')) || [];
+let dataFinance = JSON.parse(localStorage.getItem('hkr_v9_data')) || [];
+let vaultGoal = JSON.parse(localStorage.getItem('hkr_vault_goal')) || { nama: "Savings Goal", target: 0 };
 let myChart = null;
 let chartMode = 'line';
 
@@ -14,6 +15,17 @@ function setChart(mode) {
     chartMode = mode;
     document.querySelectorAll('.chart-controls span').forEach(s => s.classList.remove('active'));
     document.getElementById('btn-' + mode).classList.add('active');
+    updateUI();
+}
+
+function setVaultGoal() {
+    const nama = document.getElementById('inputNamaGoal').value;
+    const target = document.getElementById('inputTargetNominal').value;
+    if(!nama || !target) return alert("Isi nama dan target nominal!");
+    vaultGoal = { nama: nama, target: parseInt(target) };
+    localStorage.setItem('hkr_vault_goal', JSON.stringify(vaultGoal));
+    document.getElementById('inputNamaGoal').value = "";
+    document.getElementById('inputTargetNominal').value = "";
     updateUI();
 }
 
@@ -61,7 +73,7 @@ function prosesTabungan(aksi) {
 }
 
 function save() {
-    localStorage.setItem('hkr_v8_data', JSON.stringify(dataFinance));
+    localStorage.setItem('hkr_v9_data', JSON.stringify(dataFinance));
     updateUI();
 }
 
@@ -84,15 +96,11 @@ function updateUI() {
         li.innerHTML = `
             <div class="item-left">
                 <h4>${item.keterangan}</h4>
-                <div class="badge-row">
-                    <span class="badge ${item.sumber==='cash'?'bg-cash':(item.sumber==='digital'?'bg-digital':'bg-cash')}">${item.sumber}</span>
-                    <span class="badge ${item.tipe==='masuk'?'bg-in':'bg-out'}">${item.tipe}</span>
-                </div>
+                <div class="badge-row"><span class="badge ${item.sumber==='cash'?'bg-cash':(item.sumber==='digital'?'bg-digital':'bg-cash')}">${item.sumber}</span>
+                <span class="badge ${item.tipe==='masuk'?'bg-in':'bg-out'}">${item.tipe}</span></div>
             </div>
             <div class="item-right" style="text-align:right">
-                <p style="color:${item.tipe==='masuk'?'#10b981':'#ef4444'}; font-weight:800; font-size:13px; margin-bottom:5px;">
-                    ${item.tipe==='masuk'?'+':'-'} ${item.nominal.toLocaleString()}
-                </p>
+                <p style="color:${item.tipe==='masuk'?'#10b981':'#ef4444'}; font-weight:800; font-size:13px; margin-bottom:5px;">${item.tipe==='masuk'?'+':'-'} ${item.nominal.toLocaleString()}</p>
                 <button class="btn-delete-modern" onclick="hapus(${item.id})">Remove</button>
             </div>`;
 
@@ -110,7 +118,24 @@ function updateUI() {
     document.getElementById('saldoCash').innerText = `Rp ${cash.toLocaleString()}`;
     document.getElementById('saldoDigital').innerText = `Rp ${digital.toLocaleString()}`;
     if(document.getElementById('saldoDigitalHalaman')) document.getElementById('saldoDigitalHalaman').innerText = `Rp ${digital.toLocaleString()}`;
-    if(document.getElementById('saldoTabungan')) document.getElementById('saldoTabungan').innerText = `Rp ${savings.toLocaleString()}`;
+    
+    // VAULT UPDATE
+    if(document.getElementById('saldoTabungan')) {
+        document.getElementById('saldoTabungan').innerText = `Rp ${savings.toLocaleString()}`;
+        document.getElementById('namaTargetDisplay').innerText = vaultGoal.nama;
+        document.getElementById('targetNominalDisplay').innerText = `Target: Rp ${vaultGoal.target.toLocaleString()}`;
+        
+        let persen = 0;
+        if (vaultGoal.target > 0) {
+            persen = (savings / vaultGoal.target) * 100;
+            if (persen > 100) persen = 100;
+            if (persen < 0) persen = 0;
+            let sisa = vaultGoal.target - savings;
+            document.getElementById('sisaKekurangan').innerText = sisa > 0 ? `Kurang Rp ${sisa.toLocaleString()} lagi` : `Target Tercapai! 🎉`;
+        }
+        document.getElementById('progressFill').style.width = persen + "%";
+        document.getElementById('progressPersen').innerText = Math.floor(persen) + "% Achieved";
+    }
 
     renderChart(inMon, outMon);
 }
