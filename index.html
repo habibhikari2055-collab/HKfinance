@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKR Finance - Multi Vault Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>HKR Finance - Clean Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,30 +18,27 @@
                 <div class="brand">HKR<span>FINANCE</span></div>
                 <div class="user-avatar">HK</div>
             </div>
-            <div class="premium-card">
-                <p class="card-label">Available Liquidity</p>
+
+            <div class="premium-card main-balance">
+                <p class="card-label">Total Balance</p>
                 <h1 id="saldoAktif">Rp 0</h1>
                 <div class="card-footer">
                     <div class="sub-stat"><span>Cash</span><p id="saldoCash">Rp 0</p></div>
                     <div class="sub-stat"><span>Digital</span><p id="saldoDigital">Rp 0</p></div>
                 </div>
             </div>
+
             <div class="glass-section">
-                <div class="chart-container-sm"><canvas id="myChart"></canvas></div>
-                <div class="chart-controls">
-                    <span id="btn-line" onclick="setChart('line')" class="active">Trend</span>
-                    <span id="btn-bar" onclick="setChart('bar')">Bar</span>
-                </div>
-            </div>
-            <div class="input-container-fixed">
+                <p class="section-title">Record Transaction</p>
                 <div class="i-grid">
                     <input type="text" id="keterangan" placeholder="Keterangan">
                     <input type="number" id="nominal" placeholder="Rp">
                     <select id="sumber"><option value="cash">Cash</option><option value="digital">Digital</option></select>
                     <select id="tipe"><option value="keluar">Keluar</option><option value="masuk">Masuk</option></select>
                 </div>
-                <button class="btn-action-main" onclick="tambahData()">RECORD TRANSACTION</button>
+                <button class="btn-action-main btn-primary" onclick="tambahData()">RECORD TRANSACTION</button>
             </div>
+
             <ul id="daftar" class="transaction-list"></ul>
         </div>
 
@@ -53,48 +50,47 @@
                 <h1 id="saldoDigitalHalaman">Rp 0</h1>
             </div>
             <div class="glass-section">
-                <p class="section-title">Inbound Transfer</p>
+                <p class="section-title">Transfer In</p>
                 <input type="number" id="nominalTopUp" placeholder="Nominal Rp" class="full-input">
-                <button class="btn-action-main" style="background: #a855f7" onclick="prosesTopUp()">EXECUTE TRANSFER</button>
+                <button class="btn-action-main btn-digital" onclick="prosesTopUp()">EXECUTE TRANSFER</button>
             </div>
-            <ul id="daftarTopUp" class="transaction-list"></ul>
         </div>
 
-        <!-- PAGE 3: VAULT (MULTI-PLAN) -->
+        <!-- PAGE 3: VAULT -->
         <div id="page-tabungan" class="page">
             <div class="brand-header"><div class="brand">SAVINGS<span>VAULT</span></div></div>
             
-            <!-- Tambah Plan Baru -->
             <div class="glass-section">
-                <p class="section-title">Create New Vault Plan</p>
+                <p class="section-title">Create New Target</p>
                 <div class="i-grid">
-                    <input type="text" id="inputNamaGoal" placeholder="Nama Target">
+                    <input type="text" id="inputNamaGoal" placeholder="Nama Rencana">
                     <input type="number" id="inputTargetNominal" placeholder="Target Rp">
                 </div>
-                <button class="btn-action-main" style="background: var(--gold)" onclick="createVaultPlan()">CREATE PLAN</button>
+                <button class="btn-action-main btn-vault" onclick="createVaultPlan()">CREATE NEW PLAN</button>
             </div>
 
-            <!-- List Container Target -->
+            <!-- List Container Plan -->
             <div id="vaultPlansContainer"></div>
 
-            <!-- Modal/Area Input Nabung (Akan muncul jika ada plan) -->
             <div class="glass-section" id="areaNabungVault" style="display:none;">
-                <p class="section-title">Deposit to Plan</p>
-                <select id="pilihPlan" class="full-input"></select>
-                <input type="number" id="nominalNabung" placeholder="Nominal Rp" class="full-input">
-                <div class="btn-split">
+                <p class="section-title">Manage Savings</p>
+                <select id="pilihPlan" class="full-input" style="margin-bottom:12px"></select>
+                <input type="number" id="nominalNabung" placeholder="Nominal Rp" class="full-input" style="margin-bottom:12px">
+                <div class="btn-group-row">
                     <button class="btn-in" onclick="prosesTabungan('masuk')">SECURE</button>
                     <button class="btn-out" onclick="prosesTabungan('keluar')">RELEASE</button>
                 </div>
             </div>
         </div>
 
+        <!-- NAVIGATION -->
         <nav class="bottom-nav">
             <div class="nav-item active" onclick="switchTab('harian')">Main</div>
             <div class="nav-item" onclick="switchTab('digital')">Digital</div>
             <div class="nav-item" onclick="switchTab('tabungan')">Vault</div>
         </nav>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
