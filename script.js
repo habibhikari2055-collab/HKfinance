@@ -1,116 +1,136 @@
-let dataFinance = JSON.parse(localStorage.getItem('hkr_v10_data')) || [];
-let vaultPlans = JSON.parse(localStorage.getItem('hkr_v10_plans')) || [];
-let myChart = null;
+// Gunakan nama storage yang berbeda agar benar-benar fresh
+const DATA_KEY = 'hkr_v10_final_data';
+const PLAN_KEY = 'hkr_v10_final_plans';
 
-function switchTab(tab) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('page-' + tab).classList.add('active');
-    event.currentTarget.classList.add('active');
-    updateUI();
-}
+let dataFinance = JSON.parse(localStorage.getItem(DATA_KEY)) || [];
+let vaultPlans = JSON.parse(localStorage.getItem(PLAN_KEY)) || [];
 
+// Fungsi Create Plan - Tambahkan console.log untuk cek di inspect element
 function createVaultPlan() {
-    const nama = document.getElementById('inputNamaGoal').value;
-    const target = document.getElementById('inputTargetNominal').value;
-    if(!nama || !target) return;
+    console.log("Tombol diklik!"); // Cek apakah ini muncul di console kanan saat diklik
     
-    vaultPlans.push({ id: Date.now(), nama: nama, target: parseInt(target) });
-    localStorage.setItem('hkr_v10_plans', JSON.stringify(vaultPlans));
-    document.getElementById('inputNamaGoal').value = "";
-    document.getElementById('inputTargetNominal').value = "";
-    updateUI();
-}
-
-function deletePlan(id) {
-    if(confirm("Hapus plan ini? Saldo di dalamnya akan dianggap hilang.")) {
-        vaultPlans = vaultPlans.filter(p => p.id !== id);
-        dataFinance = dataFinance.filter(d => d.planId !== id);
-        localStorage.setItem('hkr_v10_plans', JSON.stringify(vaultPlans));
-        save();
+    const namaInput = document.getElementById('inputNamaGoal');
+    const targetInput = document.getElementById('inputTargetNominal');
+    
+    if (!namaInput || !targetInput) {
+        console.error("Elemen input tidak ditemukan!");
+        return;
     }
-}
 
-function toggleDetail(id) {
-    document.getElementById('history-'+id).classList.toggle('active');
-}
+    const nama = namaInput.value.trim();
+    const target = parseInt(targetInput.value);
 
-function tambahData() {
-    const ket = document.getElementById('keterangan').value;
-    const nom = document.getElementById('nominal').value;
-    if (!ket || !nom) return;
-    dataFinance.push({ id: Date.now(), keterangan: ket, nominal: parseInt(nom), tipe: document.getElementById('tipe').value, sumber: document.getElementById('sumber').value, tanggal: new Date().toISOString() });
-    save();
-    document.getElementById('keterangan').value = ""; document.getElementById('nominal').value = "";
-}
-
-function prosesTabungan(aksi) {
-    const planId = parseInt(document.getElementById('pilihPlan').value);
-    const nom = parseInt(document.getElementById('nominalNabung').value);
-    if (!nom || !planId) return;
-
-    if (aksi === 'masuk') {
-        dataFinance.push({ id: Date.now(), keterangan: `Vault: ${nom}`, nominal: nom, tipe: 'keluar', sumber: 'cash', planId: planId, tanggal: new Date().toISOString() });
-    } else {
-        dataFinance.push({ id: Date.now(), keterangan: `Release: ${nom}`, nominal: nom, tipe: 'masuk', sumber: 'cash', planId: planId, isWithdraw: true, tanggal: new Date().toISOString() });
+    if (nama === "" || isNaN(target) || target <= 0) {
+        alert("Harap isi Nama Target dan Nominal Target dengan benar!");
+        return;
     }
-    save();
-    document.getElementById('nominalNabung').value = "";
-}
 
-function save() {
-    localStorage.setItem('hkr_v10_data', JSON.stringify(dataFinance));
+    const newPlan = {
+        id: Date.now(),
+        nama: nama,
+        target: target
+    };
+
+    vaultPlans.push(newPlan);
+    localStorage.setItem(PLAN_KEY, JSON.stringify(vaultPlans));
+    
+    // Reset Input
+    namaInput.value = "";
+    targetInput.value = "";
+    
+    console.log("Plan baru berhasil disimpan:", newPlan);
     updateUI();
 }
 
 function updateUI() {
-    let cash = 0, digital = 0, inMon = 0, outMon = 0;
+    console.log("Mengupdate tampilan...");
     const container = document.getElementById('vaultPlansContainer');
     const selectPlan = document.getElementById('pilihPlan');
+    
+    if(!container) return;
+    
     container.innerHTML = "";
-    selectPlan.innerHTML = "<option value=''>Pilih Target...</option>";
+    if(selectPlan) selectPlan.innerHTML = "<option value=''>Pilih Target...</option>";
 
-    // Hitung Saldo Utama
+    // Render Kartu Plan
+    vaultPlans.forEach(plan => {
+        let saldoPlan = 0;
+        let historyHTML = "";
+        
+        // Filter transaksi yang masuk ke plan ini
+        dataFinance.filter(d => d.planId === plan.id).forEach(d => {
+            let isOut = d.isWithdraw;
+            saldoPlan += isOut ? -d.nominal : d.nominal;
+            historyHTML += `
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding:5px 0;">
+                    <span>${isOut ? 'Keluar' : 'Masuk'}</span>
+                    <span>Rp ${d.nominal.toLocaleString()}</span>
+                </div>`;
+        });
+
+        let persen = Math.min((saldoPlan / plan.target) * 100, 100);
+        
+        // Membuat Card HTML
+        const card = document.createElement('div');
+        card.className = "premium-card gold-variant";
+        card.style.marginBottom = "15px";
+        card.style.cursor = "pointer";
+        card.onclick = () => {
+            const hist = document.getElementById(`history-${plan.id}`);
+            hist.style.display = hist.style.display === 'none' ? 'block' : 'none';
+        };
+
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <p class="card-label" style="margin:0">${plan.nama}</p>
+                <span style="font-size:12px; font-weight:800">${Math.floor(persen)}%</span>
+            </div>
+            <h1 style="font-size:1.8rem; margin:10px 0">Rp ${saldoPlan.toLocaleString()}</h1>
+            <div class="progress-track" style="background:rgba(0,0,0,0.2); height:8px; border-radius:10px; overflow:hidden">
+                <div style="width:${persen}%; background:#fff; height:100%; transition:0.5s"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px">
+                <p style="font-size:10px; opacity:0.8">Target: Rp ${plan.target.toLocaleString()}</p>
+                <button onclick="event.stopPropagation(); deletePlan(${plan.id})" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:10px; font-weight:800; cursor:pointer">HAPUS</button>
+            </div>
+            <div id="history-${plan.id}" style="display:none; background:rgba(0,0,0,0.1); border-radius:10px; padding:10px; margin-top:10px; font-size:11px">
+                ${historyHTML || 'Belum ada riwayat'}
+            </div>
+        `;
+        container.appendChild(card);
+        
+        if(selectPlan) {
+            const opt = document.createElement('option');
+            opt.value = plan.id;
+            opt.innerText = plan.nama;
+            selectPlan.appendChild(opt);
+        }
+    });
+
+    // Handle tampilan area nabung
+    const areaNabung = document.getElementById('areaNabungVault');
+    if(areaNabung) areaNabung.style.display = vaultPlans.length > 0 ? 'block' : 'none';
+
+    // Update Saldo Lainnya (Cash & Digital)
+    let cash = 0, digital = 0;
     dataFinance.forEach(d => {
         let m = d.tipe === 'masuk' ? 1 : -1;
         if(d.sumber === 'cash') cash += (d.nominal * m);
         if(d.sumber === 'digital') digital += (d.nominal * m);
     });
 
-    // Render Vault Plans
-    vaultPlans.forEach(plan => {
-        let saldoPlan = 0;
-        let historyHTML = "";
-        dataFinance.filter(d => d.planId === plan.id).forEach(d => {
-            let isOut = d.isWithdraw;
-            saldoPlan += isOut ? -d.nominal : d.nominal;
-            historyHTML += `<div class="history-item"><span>${isOut?'Out':'In'}</span><span>Rp ${d.nominal.toLocaleString()}</span></div>`;
-        });
-
-        let persen = Math.min((saldoPlan / plan.target) * 100, 100);
-        
-        container.innerHTML += `
-            <div class="premium-card gold-variant" onclick="toggleDetail(${plan.id})">
-                <div style="display:flex; justify-content:space-between">
-                    <p class="card-label">${plan.nama}</p>
-                    <p class="card-label">${Math.floor(persen)}%</p>
-                </div>
-                <h1>Rp ${saldoPlan.toLocaleString()}</h1>
-                <div class="progress-track"><div class="progress-fill" style="width:${persen}%"></div></div>
-                <p style="font-size:9px; opacity:0.8">Target: Rp ${plan.target.toLocaleString()}</p>
-                <div class="vault-history" id="history-${plan.id}">${historyHTML || 'Belum ada riwayat'}</div>
-                <button class="btn-delete-plan" onclick="event.stopPropagation(); deletePlan(${plan.id})">DELETE PLAN</button>
-            </div>
-        `;
-        selectPlan.innerHTML += `<option value="${plan.id}">${plan.nama}</option>`;
-    });
-
-    document.getElementById('areaNabungVault').style.display = vaultPlans.length > 0 ? 'block' : 'none';
-    document.getElementById('saldoAktif').innerText = `Rp ${(cash + digital).toLocaleString()}`;
-    document.getElementById('saldoCash').innerText = `Rp ${cash.toLocaleString()}`;
-    document.getElementById('saldoDigital').innerText = `Rp ${digital.toLocaleString()}`;
-    if(document.getElementById('saldoDigitalHalaman')) document.getElementById('saldoDigitalHalaman').innerText = `Rp ${digital.toLocaleString()}`;
+    if(document.getElementById('saldoAktif')) document.getElementById('saldoAktif').innerText = `Rp ${(cash + digital).toLocaleString()}`;
 }
 
-function setChart(mode) { /* Chart logic tetap sama seperti v9 */ }
-window.onload = () => updateUI();
+function deletePlan(id) {
+    if(confirm("Hapus plan ini?")) {
+        vaultPlans = vaultPlans.filter(p => p.id !== id);
+        dataFinance = dataFinance.filter(d => d.planId !== id);
+        localStorage.setItem(PLAN_KEY, JSON.stringify(vaultPlans));
+        localStorage.setItem(DATA_KEY, JSON.stringify(dataFinance));
+        updateUI();
+    }
+}
+
+// Inisialisasi saat web dibuka
+window.onload = updateUI;
