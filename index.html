@@ -72,12 +72,45 @@
             <ul id="daftarTopUp" class="transaction-list"></ul>
         </div>
 
-        <div id="page-tabungan" class="page">
-            <div class="brand-header"><div class="brand">SAVINGS<span>VAULT</span></div></div>
-            <div class="premium-card gold-variant">
-                <p class="card-label">Total Assets Vault</p>
-                <h1 id="saldoTabungan">Rp 0</h1>
+       <div id="page-tabungan" class="page">
+    <div class="brand-header"><div class="brand">SAVINGS<span>VAULT</span></div></div>
+    
+    <div class="premium-card gold-variant">
+        <p class="card-label" id="namaTargetDisplay">Savings Goal</p>
+        <h1 id="saldoTabungan">Rp 0</h1>
+        
+        <!-- PROGRESS BAR BARU -->
+        <div class="goal-container">
+            <div class="goal-info">
+                <span id="progressPersen">0% Achieved</span>
+                <span id="targetNominalDisplay">Target: Rp 0</span>
             </div>
+            <div class="progress-track">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p id="sisaKekurangan" class="shortfall-text">Set your goal to start tracking</p>
+        </div>
+    </div>
+
+    <div class="glass-section">
+        <p class="section-title">Vault Planning</p>
+        <div class="i-grid" style="margin-bottom: 10px;">
+            <input type="text" id="inputNamaGoal" placeholder="Nama Target (ex: Laptop)">
+            <input type="number" id="inputTargetNominal" placeholder="Target Rp">
+        </div>
+        <button class="btn-action-main" style="background: #d97706; margin-bottom: 15px;" onclick="setVaultGoal()">UPDATE VAULT PLAN</button>
+        
+        <hr style="border: 0; border-top: 1px solid #2d364f; margin-bottom: 15px;">
+        
+        <p class="section-title">Asset Management</p>
+        <input type="number" id="nominalNabung" placeholder="Nominal Rp" class="full-input">
+        <div class="btn-split">
+            <button class="btn-in" onclick="prosesTabungan('masuk')">SECURE ASSET</button>
+            <button class="btn-out" onclick="prosesTabungan('keluar')">RELEASE FUNDS</button>
+        </div>
+    </div>
+    <ul id="daftarNabung" class="transaction-list"></ul>
+</div>
             <div class="glass-section">
                 <p class="section-title">Asset Management</p>
                 <input type="number" id="nominalNabung" placeholder="Nominal Rp" class="full-input">
