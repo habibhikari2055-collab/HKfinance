@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKR Finance - Clean Edition</title>
+    
+    <!-- SEO META TAGS - Agar muncul di Google -->
+    <title>HKRfinance - Smart Personal Finance Vault</title>
+    <meta name="description" content="HKRfinance adalah aplikasi manajemen keuangan pribadi yang aman dengan fitur Multi-Vault untuk mencapai target tabungan Anda.">
+    <meta name="keywords" content="HKRfinance, keuangan, tabungan harian, catatan keuangan, vault tabungan">
+    <meta name="author" content="HKR Finance Team">
+    
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -38,7 +44,6 @@
                 </div>
                 <button class="btn-action-main btn-primary" onclick="tambahData()">RECORD TRANSACTION</button>
             </div>
-
             <ul id="daftar" class="transaction-list"></ul>
         </div>
 
@@ -50,7 +55,7 @@
                 <h1 id="saldoDigitalHalaman">Rp 0</h1>
             </div>
             <div class="glass-section">
-                <p class="section-title">Transfer In</p>
+                <p class="section-title">Transfer In / Top Up</p>
                 <input type="number" id="nominalTopUp" placeholder="Nominal Rp" class="full-input">
                 <button class="btn-action-main btn-digital" onclick="prosesTopUp()">EXECUTE TRANSFER</button>
             </div>
@@ -59,7 +64,6 @@
         <!-- PAGE 3: VAULT -->
         <div id="page-tabungan" class="page">
             <div class="brand-header"><div class="brand">SAVINGS<span>VAULT</span></div></div>
-            
             <div class="glass-section">
                 <p class="section-title">Create New Target</p>
                 <div class="i-grid">
@@ -68,10 +72,7 @@
                 </div>
                 <button class="btn-action-main btn-vault" onclick="createVaultPlan()">CREATE NEW PLAN</button>
             </div>
-
-            <!-- List Container Plan -->
             <div id="vaultPlansContainer"></div>
-
             <div class="glass-section" id="areaNabungVault" style="display:none;">
                 <p class="section-title">Manage Savings</p>
                 <select id="pilihPlan" class="full-input" style="margin-bottom:12px"></select>
